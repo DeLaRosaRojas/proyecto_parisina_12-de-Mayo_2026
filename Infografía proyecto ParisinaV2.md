@@ -2,7 +2,7 @@
 
 ## Fase Inicial de Mi Proyecto
 
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/372f5e52-dd14-4ff2-8d7a-b7339f92f71e" />
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/225e90de-8ce9-4fac-b278-183d2556d76e" />
 
 
 
