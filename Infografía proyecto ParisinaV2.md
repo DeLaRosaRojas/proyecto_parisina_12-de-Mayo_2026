@@ -11,3 +11,5 @@
 ## Fase 5 y 6
 <img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/6899dbba-7bca-4a90-b7e2-e4caa216573f" />
 
+## Fase Final
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/39907c38-5312-49dc-a54f-ed30b8281316" />
