@@ -1,5 +1,5 @@
-## Pregunta 1
-# Para la gestión de una tienda de ropa como **Parisina**, estas son las entidades principales que necesitamos modelar:Aquí está el resumen de las **12 entidades** y su propósito dentro del sistema:
+# Pregunta 1
+## Para la gestión de una tienda de ropa como **Parisina**, estas son las entidades principales que necesitamos modelar:Aquí está el resumen de las **12 entidades** y su propósito dentro del sistema:
 
 <img width="542" height="821" alt="image" src="https://github.com/user-attachments/assets/9e9080bc-f4c8-460b-a1bf-238a129d2442" />
 
@@ -20,7 +20,7 @@ El campo `coleccion_origen` en el Carrito e Inventario actúa como discriminador
 **Colecciones recomendadas adicionales:** `Pedidos` es prácticamente obligatoria para no perder el estado entre Carrito y Devoluciones. `Inventario` centraliza el stock de las 6 colecciones de productos y facilita alertas de reabastecimiento por sucursal.
 
 -----------------
-# Dame las entidades con sus atributos y su tipo en forma de tabla para cada una de las entidades. De manera organizada.
+## Dame las entidades con sus atributos y su tipo en forma de tabla para cada una de las entidades. De manera organizada.
 
 <img width="744" height="129" alt="image" src="https://github.com/user-attachments/assets/f9a9b6f1-9a01-49a4-8cc9-510d129a6fdc" />
 <img width="751" height="595" alt="image" src="https://github.com/user-attachments/assets/e5f39e62-5771-4744-b5cb-cb63be44d1a7" />
