@@ -1,15 +1,16 @@
-# Infografía Proyecto Parisina 
+# Infografía Proyecto Parisina. Fases De Mi Proyecto
 
-# Fases De Mi Proyecto
+## Fase 1 y 2.
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/bedda263-9e1e-4606-a23a-c5868d79b4c3" />
 
-## Fase Inicial. 1 y 2
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/042ffc03-de0d-4aab-8f85-74cb59c797aa" />
+## Fase 3.
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/805fd11b-0dd3-4cc1-8a28-d2f20af0ecb5" />
 
-## Fase 3 y 4
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/384e8ed7-164f-4d4f-81ba-9e0c10d2d904" />
+## Fase 4 y 5
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/5b208095-781c-4644-901b-26e8257b8ec3" />
 
-## Fase 5 y 6
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/6899dbba-7bca-4a90-b7e2-e4caa216573f" />
+## Fase 6 y 7.
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/d979f7d9-4085-4041-9d15-94acb6496b3d" />
 
-## Fase Final
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/39907c38-5312-49dc-a54f-ed30b8281316" />
+## Fase final, 8.
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/ba25dd92-e9ea-4044-97d8-4c17508b264e" />
