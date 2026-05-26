@@ -1,561 +1,740 @@
-# Prompt Mejorado:
-
-Vamos a Mejorar y hacer de forma Profesional nuestro Plan de Implementación. Importante, NO me proporciones el código todavía. Por favor. 
-Actúa como un creador de software, diseñador de aplicaciones móviles multiplataforma. Proporcionandome Paso a Paso cada requerimiento. 
-
-Quiero crear una Aplicación multiplataforma en Flutter Dart y Firebase utilizando Firebase Studio ( en el navegador, Google). Qué herramientas se requieren, ui, ux, dependencias, login autenticación usuario password, base de datos Firestore, privider, dependencias en pubspec.yaml. Lenguaje Dart, Flutter.
-
-Proyecto de Tienda de Telas y Costuras con el nombre "Parisina", el objetivo de esta app es que las personas que accedan al Sitio, puedan comprar los diversos productos que ofrece nuestra tienda. 
-
-La paleta de colores que utilizaremos será: Fondo de página (Blanco), Appbar (Rojo), Iconos AppBar (Blancos), Footer (Negro), Letras fuente Footer (Blanco); Contenido dentro del cuerpo (Subtonos Grises, Amarillos, Negros y Rojo, con detalles Blancos en caso de ser necesario). Como parte de ser diseñador, te encargo que escojas subtonos visualmente atractivos y elegantes. 
-
-El Entorno de trabajo que usaré será "Firebase Studio" vinculada con una Base de datos en "Firebase Console", me proporcionarán la lista de dependencias que necesitare para el pubsyec.yaml como ayuda para la generación de este proyecto, te dejaré las tablas que planeo usar para este proyecto con sus campos-tipo y descripción.  
-
-También me vas a generar un árbol de la estructura del proyecto con todos los archivos para saber cómo quedará estructurado. Importante proporcionar la información lo más completa y organizada posible. Sin evitar detalles IMPORTANTES, pero que sea sencillo de entender.
-
-CLIENTE
-Compradores registrados en la tienda
-01 / 12
-Campo	Tipo	Llave	Descripción
-id_cliente	INT	PK	Identificador único del cliente
-nombre	VARCHAR(100)		Nombre completo
-email	VARCHAR(120)		Correo electrónico (único)
-telefono	VARCHAR(20)		Número de contacto
-direccion	VARCHAR(200)		Dirección de envío principal
-fecha_nacimiento	DATE		Para segmentación y cumpleaños
-puntos_lealtad	INT		Saldo del programa de fidelidad
-fecha_registro	DATE		Cuándo se registró por primera vez
-activo	BOOLEAN		Indica si la cuenta está habilitada
-
-VENTA
-Transacciones de compra
-02 / 12
-Campo	Tipo	Llave	Descripción
-id_venta	INT	PK	Identificador único de la venta
-id_cliente	INT	FK	Referencia al cliente que compró
-id_empleado	INT	FK	Empleado que procesó la venta
-id_sucursal	INT	FK	Sucursal donde se realizó
-fecha	DATE		Fecha y hora de la transacción
-subtotal	DECIMAL(10,2)		Importe antes de impuestos
-impuesto	DECIMAL(10,2)		IVA aplicado
-total	DECIMAL(10,2)		Importe total cobrado
-metodo_pago	VARCHAR(30)		Efectivo, tarjeta, transferencia…
-estatus	VARCHAR(20)		Pagada, cancelada, pendiente
-folio	VARCHAR(30)		Número de ticket o factura
-
-DETALLE_VENTA
-Renglones de cada transacción
-03 / 12
-Campo	Tipo	Llave	Descripción
-id_detalle	INT	PK	Identificador del renglón
-id_venta	INT	FK	Venta a la que pertenece
-id_variante	INT	FK	Variante específica (talla/color)
-id_promocion	INT	FK	Promoción aplicada (si aplica)
-cantidad	INT		Número de piezas vendidas
-precio_unitario	DECIMAL(10,2)		Precio al momento de la venta
-descuento	DECIMAL(10,2)		Monto descontado en el renglón
-subtotal	DECIMAL(10,2)		Importe final del renglón
-
-PRODUCTO
-Catálogo maestro de artículos
-04 / 12
-Campo	Tipo	Llave	Descripción
-id_producto	INT	PK	Identificador único del producto
-id_categoria	INT	FK	Categoría a la que pertenece
-id_proveedor	INT	FK	Proveedor que lo suministra
-nombre	VARCHAR(150)		Nombre comercial del artículo
-sku	VARCHAR(40)		Código de referencia interno (único)
-descripcion	TEXT		Descripción detallada
-precio_base	DECIMAL(10,2)		Precio de lista sin descuentos
-costo	DECIMAL(10,2)		Costo de adquisición
-imagen_url	VARCHAR(255)		URL de la foto principal
-activo	BOOLEAN		Si el producto está en catálogo activo
-fecha_alta	DATE		Fecha en que se incorporó al catálogo
-
-VARIANTE
-Combinaciones de talla y color por producto
-05 / 12
-Campo	Tipo	Llave	Descripción
-id_variante	INT	PK	Identificador único de la variante
-id_producto	INT	FK	Producto al que pertenece
-talla	VARCHAR(10)		XS, S, M, L, XL, XXL, numérica…
-color	VARCHAR(40)		Nombre o código hex del color
-codigo_barras	VARCHAR(50)		EAN-13 o código interno
-precio_diferencial	DECIMAL(10,2)		Sobreprecio respecto al base (si aplica)
-activo	BOOLEAN		Si la variante está disponible
-
-CATEGORIA
-Árbol de clasificación de productos
-06 / 12
-Campo	Tipo	Llave	Descripción
-id_categoria	INT	PK	Identificador único
-nombre	VARCHAR(80)		Nombre de la categoría (Vestidos, Blusas…)
-id_categoria_padre	INT	FK	Referencia a sí misma para subcategorías
-descripcion	VARCHAR(200)		Descripción opcional de la categoría
-nivel	INT		Profundidad en el árbol (1=raíz)
-activo	BOOLEAN		Si la categoría está visible
-
-INVENTARIO
-Stock por variante y sucursal
-07 / 12
-Campo	Tipo	Llave	Descripción
-id_inventario	INT	PK	Identificador del registro
-id_variante	INT	FK	Variante de producto
-id_sucursal	INT	FK	Sucursal o bodega
-cantidad	INT		Piezas disponibles actualmente
-cantidad_minima	INT		Punto de reorden para alertas
-ultima_actualizacion	DATE		Fecha del último movimiento
-
-SUCURSAL
-Puntos de venta y bodegas
-08 / 12
-Campo	Tipo	Llave	Descripción
-id_sucursal	INT	PK	Identificador único de la sucursal
-nombre	VARCHAR(100)		Nombre o alias de la tienda
-direccion	VARCHAR(200)		Dirección física completa
-ciudad	VARCHAR(80)		Ciudad donde opera
-estado	VARCHAR(60)		Estado / provincia
-telefono	VARCHAR(20)		Teléfono de contacto
-tipo	VARCHAR(20)		Tienda, bodega, outlet…
-activo	BOOLEAN		Si la sucursal está en operación
-
-EMPLEADO
-Personal de la empresa
-09 / 12
-Campo	Tipo	Llave	Descripción
-id_empleado	INT	PK	Identificador único del empleado
-id_sucursal	INT	FK	Sucursal donde trabaja
-nombre	VARCHAR(100)		Nombre completo
-puesto	VARCHAR(60)		Gerente, vendedor, cajero…
-email	VARCHAR(120)		Correo corporativo
-telefono	VARCHAR(20)		Teléfono de contacto
-salario	DECIMAL(10,2)		Salario base mensual
-fecha_ingreso	DATE		Fecha de contratación
-activo	BOOLEAN		Si el empleado está activo
-
-PROVEEDOR
-Fabricantes y distribuidores
-10 / 12
-Campo	Tipo	Llave	Descripción
-id_proveedor	INT	PK	Identificador único
-nombre	VARCHAR(120)		Razón social o nombre comercial
-contacto	VARCHAR(100)		Nombre del representante
-email	VARCHAR(120)		Correo de contacto
-telefono	VARCHAR(20)		Teléfono principal
-pais	VARCHAR(60)		País de origen
-ciudad	VARCHAR(80)		Ciudad de la empresa proveedora
-condiciones_pago	VARCHAR(100)		Crédito a 30 días, contado…
-activo	BOOLEAN		Si el proveedor sigue activo
-
-DEVOLUCION
-Registro de devoluciones posventa
-11 / 12
-Campo	Tipo	Llave	Descripción
-id_devolucion	INT	PK	Identificador único
-id_venta	INT	FK	Venta original relacionada
-id_variante	INT	FK	Variante devuelta
-id_empleado	INT	FK	Empleado que gestionó la devolución
-fecha	DATE		Fecha en que se realizó
-cantidad	INT		Piezas devueltas
-motivo	VARCHAR(200)		Razón declarada por el cliente
-tipo_resolucion	VARCHAR(30)		Reembolso, cambio, nota de crédito
-monto_reembolso	DECIMAL(10,2)		Importe devuelto al cliente
-estatus	VARCHAR(20)		Pendiente, aprobada, rechazada
-
-PROMOCION
-Descuentos y campañas comerciales
-12 / 12
-Campo	Tipo	Llave	Descripción
-id_promocion	INT	PK	Identificador único
-nombre	VARCHAR(100)		Nombre de la campaña
-descripcion	VARCHAR(200)		Detalle de la promoción
-tipo	VARCHAR(30)		Porcentaje, monto fijo, 2x1…
-descuento_valor	DECIMAL(10,2)		Valor del descuento (% o $)
-fecha_inicio	DATE		Inicio de vigencia
-fecha_fin	DATE
-
-Envía en una sola respuesta completa, unificiando toda la infrmación que te proporcioné y las mejoras de redacción y especificación que te pedí. Necesito el prompt mejorado.  NO OLVIDES NINGUNA INFORMACiÖN ANTERIOR PUESTA. Evita usar el idioma Inglés y además las tablas necesito que las especifiques MUY BIEN (para Firestore console).
-
-Además, agrega estos requisitos: 
-**CONTEXTO DEL PROYECTO:**
-- **Nombre:** Parisina (Tienda de telas y costuras).
-- **Plataforma:** Android (Prioridad), compilación en dispositivo físico.
-- **Modo:** Simulación (E-commerce educativo). No se procesan pagos reales, pero se debe simular el flujo completo.
-- **Idioma:** Español.
-
-**REQUERIMIENTOS TÉCNICOS:**
-1. **Stack:** Flutter (Dart) + Firebase (Auth + Firestore).
-5. **Imágenes:** Las imágenes se cargarán vía URLs públicas (GitHub).
-6. **Pagos:** Simulación. Calcular Subtotal + IVA (16%). Opciones visuales de MercadoPago/PayPal, pero al confirmar, mostrar un `Dialog` de "Compra Exitosa".
-
-
-------------------------------------------------------
-
-# 📘 PLAN DE IMPLEMENTACIÓN PROFESIONAL: PARISINA. TIENDA DE TELAS Y COSTURAS
-> *Arquitectura documental, diseño de interfaz, estructura de datos y flujo de desarrollo. Optimizado para compilación en Android físico, modo simulación educativa y gestión 100% en español.*
+# 📦 Plan de Implementación Profesional: **Parisina. Tienda de Telas y Costura**
+> *Documento técnico y de arquitectura para desarrollo multiplataforma (Flutter + Firebase). Basado en diseños Figma aprobados. Enfoque procedural, sin código fuente. Estructurado para ejecución secuencial y escalable.*
 
 ---
 
-## 🎯 1. CONTEXTO Y ALCANCE DEL PROYECTO
-- **Nombre oficial:** Parisina (Tienda de telas y costuras)
-- **Plataforma objetivo:** Android (prioridad), con compilación y pruebas en dispositivo físico.
-- **Modo de operación:** Simulación educativa. No se integra pasarela de pagos real. Se replica el flujo completo de comercio electrónico (catálogo, carrito, checkout, confirmación).
-- **Idioma de la aplicación:** Español (localización predeterminada `es_MX`).
-- **Stack tecnológico:** Flutter (Dart) + Firebase (Autenticación por correo/contraseña + Firestore como base de datos documental).
-- **Gestión de imágenes:** Carga dinámica mediante URLs públicas (almacenadas en repositorios de GitHub o similar).
-- **Flujo de pagos:** Cálculo automático de `Subtotal + IVA (16%)`. Selección visual de métodos (Mercado Pago, PayPal, Transferencia). Al confirmar, se muestra un diálogo modal con el mensaje `Compra Exitosa` y se simula el registro en historial.
+## 🎯 1. Alcance & Especificaciones Técnicas
+- **Nombre:** Parisina. Tienda de Telas y Costura
+- **Objetivo:** Plataforma e-commerce educativa para consulta, selección y compra simulada de productos de costura, divididos por categorías.
+- **Plataforma Prioritaria:** Android (compilación en dispositivo físico)
+- **Modo de Operación:** Simulación educativa. No se integran pasarelas reales. Flujo de checkout completo con cálculo automático de IVA (16%) y diálogo de confirmación.
+- **Idioma de Interfaz:** Español (todos los textos visibles, validaciones y mensajes)
+- **Gestión de Estado:** `Provider` (reactivo, inyección de dependencias, separación lógica/UI)
+- **Base de Datos:** Firestore (NoSQL, tiempo real, escalable)
+- **Autenticación:** Firebase Auth (Email/Contraseña) con roles: `admin` y `cliente`
+- **Imágenes:** URLs públicas (GitHub Raw/Releases). Caché local para rendimiento.
+- **Nota sobre "Firebase Studio":** Firebase no posee un producto oficial con ese nombre. Se refiere a la combinación de **Firebase Console** + **Firestore Web UI** + **Firebase Emulator Suite**. El plan utiliza esta stack oficial para diseño, pruebas locales y despliegue.
 
 ---
 
-## 🛠️ 2. ENTORNO DE DESARROLLO Y HERRAMIENTAS REQUERIDAS
-- **Kit de desarrollo:** Flutter SDK (canal estable) + Dart SDK. Verificación con `flutter doctor`.
-- **Editor de código:** Visual Studio Code (recomendado por ligereza y ecosistema oficial). Extensiones obligatorias: `Flutter`, `Dart`, `Firebase`, `Pubspec Assist`, `Error Lens`, `Material Icon Theme`.
-- **Consola de Firebase:** Se utiliza la interfaz web (Firebase Console) para configuración de proyectos, autenticación, Firestore, reglas de seguridad y analíticas. Si se hace referencia a `Firebase Studio`, se entiende como la consola web + flujo de integración local.
-- **Compilación física Android:** Activación de `Opciones de desarrollador`, `Depuración USB` y perfil de compilación `debug`/`profile` para pruebas en terminal real.
-- **Control de versiones:** Git con ramas `main` (estable), `develop` (integración) y `feature/*` (módulos por funcionalidad).
-- **Diseño y prototipado:** Figma o herramienta equivalente para validar componentes antes de maquetar.
-- **Pruebas de flujo:** Insomnia o Postman (opcional) para validar reglas de seguridad y respuestas de Firestore sin interferir con la interfaz.
+## ️ 2. Herramientas & Entorno de Desarrollo
+| Categoría | Herramienta | Propósito |
+|-----------|-------------|-----------|
+| **SDK & CLI** | Flutter SDK (canal stable) + Dart | Motor de compilación y lenguaje base |
+| | Firebase CLI (`firebase-tools`) | Emuladores, despliegue, gestión de reglas |
+| **IDE & Extensiones** | VS Code / Android Studio | Entorno principal de desarrollo |
+| | Extensiones: `Flutter`, `Dart`, `Firebase`, `Awesome Snippets` | Autocompletado, debugging, linting |
+| **Diseño UI/UX** | Figma / Penpot | Wireframes, prototipado, sistema de diseño (diseños aprobados proporcionados) |
+| **Control de Versiones** | Git + GitHub/GitLab | Historial, ramas, colaboración |
+| **Pruebas & Simulación** | Android SDK + ADB | Compilación y ejecución en dispositivo físico |
+| | Firebase Emulator Suite (Auth + Firestore) | Pruebas locales sin consumo de cuotas |
+| **Gestión de Proyecto** | Notion / Trello / Jira | Backlog, sprints, seguimiento de tareas |
 
 ---
 
-## 🎨 3. SISTEMA DE DISEÑO UI/UX (PALETA Y COMPONENTES)
-| Elemento | Color | Código Hexadecimal | Uso y Comportamiento UX |
-|---|---|---|---|
-| Fondo principal | Blanco puro | `#FFFFFF` | Lienzo base. Garantiza legibilidad y limpieza visual. |
-| Barra superior (AppBar) | Rojo elegante | `#C41E3A` | Identidad de marca. Tono profundo y profesional para textiles. |
-| Iconos AppBar | Blanco | `#FFFFFF` | Contraste óptimo y accesible sobre el fondo rojo. |
-| Pie de página (Footer) | Negro mate | `#121212` | Reduce fatiga visual frente al negro absoluto. Contiene enlaces legales y contacto. |
-| Texto Footer | Blanco suave | `#F2F2F2` | Lectura cómoda en modo oscuro parcial. |
-| Texto principal | Negro grafito | `#212121` | Jerarquía tipográfica para títulos, descripciones y precios. |
-| Fondos de sección | Gris perla | `#F5F5F7` | Separación visual entre bloques sin usar bordes agresivos. |
-| Acento promocional | Amarillo dorado | `#F9A825` | Destaca descuentos, insignias de ofertas y botones secundarios. |
-| Acento interactivo | Rojo ladrillo | `#B71C1C` | Botones de acción principal, estados activos y alertas críticas. |
-| Detalles/Elevación | Blanco nieve | `#FAFAFA` | Tarjetas, sombras suaves y contenedores flotantes. |
+## 🎨 3. Diseño UI/UX (Basado en Diseños Figma Aprobados)
+### 🎨 Paleta de Colores (Extraída de Diseños)
+| Elemento | Hex | Uso en Diseños |
+|----------|-----|----------------|
+| Fondo Principal | `#FFFFFF` | Todas las pantallas, cards, contenedores base |
+| AppBar | `#B71C1C` (Rojo intenso) | Encabezado superior en todas las pantallas internas |
+| Logo AppBar | Blanco sobre rojo | Imagen "Parisina" centrada o izquierda en AppBar |
+| Iconos AppBar | `#FFFFFF` | Carrito, perfil, menú hamburguesa sobre AppBar rojo |
+| Footer | `#000000` (Negro puro) | Barra inferior fija en todas las pantallas |
+| Texto Footer | `#FFFFFF` | Logo Parisina + "• 2026" centrado |
+| Botones Primarios | `#1A1A1A` (Negro carbón) | "Inicio Sesión", "Comprar", "Registrarse" |
+| Texto Botones | `#FFFFFF` | Contraste sobre botones negros |
+| Links/Texto Secundario | `#6B6B6B` (Gris medio) | "Buscar ayuda", textos auxiliares |
+| Inputs | `#E8E8E8` (Gris claro) | Fondo de campos de formulario |
+| Texto Labels | `#333333` (Gris oscuro) | Títulos de campos, nombres de productos |
+| Badges/Precios | `#000000` | Precios destacados en cards |
+| Acento Verde | `#4CAF50` | Badges promocionales ("30% Off en línea") |
 
-**Tipografía y Escalas:**
-- Títulos: `Montserrat` (pesos 600-700). Escala: 28px, 22px.
-- Cuerpo y navegación: `Inter` (pesos 400-500). Escala: 16px, 14px, 12px.
-- Accesibilidad: Relación de contraste mínima 4.5:1. Áreas táctiles mínimas 44x44 puntos.
+### 📐 Componentes UI (Según Diseños Figma)
+#### 🏠 MainPage (Pantalla de Bienvenida)
+- **Logo:** Imagen "Parisina" grande centrada en fondo blanco, con borde rojo superior
+- **Texto:** "Bienvenido" (grande) + "A la mejor tienda de telas y costuras en Cd-Juarez" (subtítulo)
+- **Botones:** Dos botones negros apilados: "Inicio Sesión Cliente" e "Inicio Sesión Administrador"
+- **Link:** "Buscar ayuda" centrado debajo de botones
 
-**Componentes Base Reutilizables:**
-- `BarraSuperiorPersonalizada`, `PieDePaginaTextil`, `BotonPrimario`, `CampoEntrada`, `TarjetaProducto`, `IndicadorCarga`, `EstadoVacio`, `FiltroCategoria`, `SelectorCantidad`, `ResumenCompra`.
+####  App Interna (Estructura Común)
+- **AppBar:** Rojo fijo con:
+  - Logo "Parisina" (izquierda o centrado)
+  - Icono carrito (derecha)
+  - Icono perfil/usuario (derecha)
+  - Icono menú hamburguesa (derecha)
+- **Footer:** Negro fijo con logo Parisina pequeño + "• 2026" centrado
 
----
+#### 🏠 HomeScreen
+- **Banner Superior:** Cuadro con borde azul/gris, texto "Bienvenido a la mejor tienda de telas y costuras !!" + botón negro "Ver Telas"
+- **Banner Promocional:** Imagen rectangular con overlay, texto "30% Off en línea" + botón verde "COMPRAR"
+- **Sección "PRODUCTOS":** Título centrado con flecha decorativa arriba
+- **Grid de Categorías:** 6 círculos con imágenes: Hilos, Telas, Vestir, Accesorios, Máquinas, Hogar
 
-## 🗃️ 4. ARQUITECTURA DE DATOS EN FIRESTORE (CONFIGURACIÓN PARA CONSOLA)
-Firestore es una base de datos documental. Las tablas relacionales se adaptan a **colecciones** y **documentos**. A continuación, se detalla la estructura exacta para crearla manualmente en la consola, con nombres de campo en notación camello, tipos nativos, descripciones y notas de configuración.
+#### 📂 Navigation Drawer (Menú Lateral)
+- **Header:** "Navegación" centrado
+- **Items:** Hilos, Telas, Vestir, Accesorios, Maquinas, Hogar (línea separadora), Nosotros, Sucursales, Contactanos
+- **Footer:** Botón negro "Cerrar Sesión"
 
-### 4.1. `clientes`
-- **Estrategia de identificador:** Usar el identificador único de Firebase Autenticación (`uid`) como identificador del documento.
-- **Campos:**
-  - `nombre` → Cadena | Nombre completo del comprador.
-  - `correo` → Cadena | Único por documento. Validar en reglas de seguridad.
-  - `telefono` → Cadena | Número de contacto.
-  - `direccion` → Mapa | `calle`, `numero`, `colonia`, `ciudad`, `estado`, `codigoPostal`, `pais`.
-  - `fechaNacimiento` → Marca de tiempo | Para segmentación y campañas de cumpleaños.
-  - `puntosLealtad` → Número entero | Saldo acumulado en programa de fidelidad.
-  - `fechaRegistro` → Marca de tiempo | Asignar automáticamente al crear el documento.
-  - `activo` → Booleano | Indica si la cuenta está habilitada para compras.
-- **Índices compuestos:** `correo` (asc), `activo` (asc).
-- **Nota de acceso:** Solo lectura/escritura por el propietario (`auth.uid == documento.id`) o administradores.
+#### 📦 Category Screens (Vestir, Accesorios, Maquinas, etc.)
+- **Header:** Título de categoría centrado con flecha arriba/abajo decorativas
+- **Vestir:** Imagen hero grande + lista vertical de cards (imagen producto, nombre, precio, botón "Comprar", botón menú "...")
+- **Accesorios/Maquinas:** Cards horizontales con imagen izquierda, texto derecha (nombre, precio, botón "Comprar", botón "...")
 
-### 4.2. `ventas`
-- **Estrategia de identificador:** Generado automáticamente por Firestore.
-- **Campos:**
-  - `idCliente` → Referencia | Vinculación al documento en `clientes`.
-  - `idEmpleado` → Referencia | Empleado que procesó la transacción.
-  - `idSucursal` → Referencia | Punto de venta donde se realizó.
-  - `fecha` → Marca de tiempo | Momento exacto de la transacción.
-  - `subtotal` → Número (decimales) | Importe antes de impuestos.
-  - `impuesto` → Número (decimales) | IVA calculado (16% del subtotal en simulación).
-  - `total` → Número (decimales) | `subtotal + impuesto`.
-  - `metodoPago` → Cadena | `efectivo`, `tarjeta`, `transferencia`, `simulado`.
-  - `estatus` → Cadena | `pagada`, `pendiente`, `cancelada`, `enviada`.
-  - `folio` → Cadena | Número visible en comprobante.
-  - `articulos` → Arreglo de mapas | Cada elemento contiene: `idVariante` (referencia), `cantidad` (número), `precioUnitario` (número), `descuento` (número), `subtotalRenglon` (número).
-- **Índices compuestos:** `idCliente` + `fecha` (desc), `estatus` + `fecha` (desc).
-- **Nota de acceso:** Cliente solo ve sus propias ventas. Administrador ve todas. Crear con transacciones para validar stock.
+#### 📝 Registro Screen
+- **Título:** "REGISTRARSE" con flecha arriba decorativa
+- **Campos:** Nombre, Apellido, Correo Electronico, Contraseña, Confirmar Contraseña (todos con iconos placeholder y fondo gris)
+- **Botón:** "REGISTRARSE" negro grande
 
-### 4.3. `productos`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `idCategoria` → Referencia | Categoría a la que pertenece.
-  - `idProveedor` → Referencia | Proveedor suministrador.
-  - `nombre` → Cadena | Nombre comercial.
-  - `sku` → Cadena | Código interno único.
-  - `descripcion` → Cadena | Detalles técnicos o de uso.
-  - `precioBase` → Número (decimales) | Precio de lista sin descuentos.
-  - `costo` → Número (decimales) | Costo de adquisición (solo visible internamente).
-  - `imagenUrl` → Cadena | URL pública de la imagen principal (GitHub).
-  - `activo` → Booleano | Si aparece en catálogo visible.
-  - `fechaAlta` → Marca de tiempo | Fecha de incorporación.
-- **Índices compuestos:** `idCategoria` + `activo`, `activo` + `fechaAlta` (desc).
-- **Nota de acceso:** Lectura pública. Escritura restringida a administradores.
+#### 📞 Contactanos Screen
+- **Título:** "Contactanos" con flecha atrás
+- **Lista:** Iconos redes sociales (Facebook, Instagram, X, TikTok, Telegram) + handles "@Parisina Oficial Mx", etc.
 
-### 4.4. `variantes`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `idProducto` → Referencia | Producto maestro asociado.
-  - `talla` → Cadena | `XS`, `S`, `M`, `L`, `XL`, `32`, `34`, etc.
-  - `color` → Cadena | Nombre o código hexadecimal.
-  - `codigoBarras` → Cadena | `EAN-13` o identificador interno.
-  - `precioDiferencial` → Número (decimales) | Ajuste sobre el precio base.
-  - `activo` → Booleano | Disponibilidad de la combinación.
-- **Índices compuestos:** `idProducto` + `activo`, `codigoBarras` (asc).
-- **Nota de acceso:** Lectura pública. No modificar directamente en producción sin validación de catálogo.
+####  Sucursales Screen
+- **Título:** "Sucursales" con flecha atrás
+- **Items:** Cards verticales con nombre sucursal, dirección, horario (verde "Abierto - Cierra a las 7 p.m."), teléfono
 
-### 4.5. `categorias`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `nombre` → Cadena | Título de la categoría (Ej: `Telas`, `Hilos`, `Accesorios`).
-  - `idCategoriaPadre` → Referencia | Apunta a otra categoría para crear subcategorías, o nulo si es raíz.
-  - `descripcion` → Cadena | Texto opcional de clasificación.
-  - `nivel` → Número entero | Profundidad en el árbol (`1` = raíz, `2` = subcategoría).
-  - `activo` → Booleano | Visibilidad en filtros.
-- **Índices compuestos:** `activo` + `nivel`, `idCategoriaPadre` (asc).
-- **Nota de acceso:** Lectura pública. Escritura solo administradores.
+#### 📖 Nosotros Screen
+- **Título:** "Nosotros" con flecha atrás
+- **Contenido:** Imagen cuadrada + texto "Te Contamos Nuestra Historia" + párrafo descriptivo histórico
 
-### 4.6. `inventarios`
-- **Estrategia de identificador:** Compuesto recomendado `"{idVariante}_{idSucursal}"` o generado con validación de unicidad.
-- **Campos:**
-  - `idVariante` → Referencia | Variante específica.
-  - `idSucursal` → Referencia | Ubicación física.
-  - `cantidad` → Número entero | Piezas disponibles actualmente.
-  - `cantidadMinima` → Número entero | Umbral para alertas de reorden.
-  - `ultimaActualizacion` → Marca de tiempo | Último movimiento registrado.
-- **Índices compuestos:** `idVariante` (asc), `cantidad` ≤ `cantidadMinima` (para consultas de alerta).
-- **Nota de acceso:** Lectura pública (stock visible). Escritura solo mediante transacciones seguras o rol `almacen`.
-
-### 4.7. `sucursales`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `nombre` → Cadena | Alias o nombre comercial del punto.
-  - `direccion` → Mapa | Dirección física completa.
-  - `ciudad` → Cadena | Localidad de operación.
-  - `estado` → Cadena | Provincia o entidad federativa.
-  - `telefono` → Cadena | Línea de contacto.
-  - `tipo` → Cadena | `tienda`, `bodega`, `outlet`.
-  - `activo` → Booleano | Operatividad actual.
-- **Índices compuestos:** `tipo` + `activo`.
-- **Nota de acceso:** Lectura pública. Datos casi estáticos, cachear en dispositivo.
-
-### 4.8. `empleados`
-- **Estrategia de identificador:** Identificador de autenticación o generado.
-- **Campos:**
-  - `idSucursal` → Referencia | Ubicación asignada.
-  - `nombre` → Cadena | Nombre completo.
-  - `puesto` → Cadena | `gerente`, `vendedor`, `cajero`, `almacen`.
-  - `correo` → Cadena | Contacto corporativo.
-  - `telefono` → Cadena | Número directo.
-  - `salario` → Número (decimales) | Base mensual (solo visible internamente).
-  - `fechaIngreso` → Marca de tiempo | Contratación.
-  - `activo` → Booleano | Estado laboral.
-- **Índices compuestos:** `idSucursal` + `activo`, `puesto` (asc).
-- **Nota de acceso:** Acceso restringido. Solo administradores ven `salario`.
-
-### 4.9. `proveedores`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `nombre` → Cadena | Razón social o marca.
-  - `contacto` → Cadena | Representante comercial.
-  - `correo` → Cadena | Canal de comunicación.
-  - `telefono` → Cadena | Línea principal.
-  - `pais` → Cadena | Origen geográfico.
-  - `ciudad` → Cadena | Sede operativa.
-  - `condicionesPago` → Cadena | `contado`, `crédito 30 días`, etc.
-  - `activo` → Booleano | Vigencia comercial.
-- **Índices compuestos:** `activo` (asc).
-- **Nota de acceso:** Exclusivo gestión interna. No exponer en app cliente.
-
-### 4.10. `devoluciones`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `idVenta` → Referencia | Transacción original vinculada.
-  - `idVariante` → Referencia | Artículo devuelto.
-  - `idEmpleado` → Referencia | Personal que gestionó el proceso.
-  - `fecha` → Marca de tiempo | Fecha de solicitud/aceptación.
-  - `cantidad` → Número entero | Piezas regresadas.
-  - `motivo` → Cadena | Razón declarada (`defectuoso`, `talla incorrecta`, etc.).
-  - `tipoResolucion` → Cadena | `reembolso`, `cambio`, `nota_credito`.
-  - `montoReembolso` → Número (decimales) | Importe a devolver.
-  - `estatus` → Cadena | `pendiente`, `aprobada`, `rechazada`, `completada`.
-- **Índices compuestos:** `idVenta` + `estatus`, `fecha` (desc).
-- **Nota de acceso:** Cliente crea solicitud. Solo administradores cambian `estatus` y `montoReembolso`. Validar que `cantidad` no supere lo comprado.
-
-### 4.11. `promociones`
-- **Estrategia de identificador:** Generado automáticamente.
-- **Campos:**
-  - `nombre` → Cadena | Título de la campaña.
-  - `descripcion` → Cadena | Detalle de beneficios.
-  - `tipo` → Cadena | `porcentaje`, `monto_fijo`, `2x1`, `combo`.
-  - `descuentoValor` → Número (decimales) | Valor aplicable.
-  - `fechaInicio` → Marca de tiempo | Inicio de vigencia.
-  - `fechaFin` → Marca de tiempo | Fin de vigencia.
-  - `activo` → Booleano | Publicación activa.
-  - `categoriasAplicables` → Arreglo de referencias | Si está vacío, aplica a todo el catálogo.
-- **Índices compuestos:** `activo` + `fechaInicio` + `fechaFin`.
-- **Nota de acceso:** Lectura pública. Filtrar por rango de fechas y estado activo en la aplicación.
+#### 🔍 Product Detail (Popup/Modal)
+- **Overlay:** Cuadro gris claro flotante
+- **Campos:** "Detalles Del Producto", Nombre, Precio (Pesos), Proveedor, Unidad
+- **Botones:** "Comprar" negro + botón "X" para cerrar
 
 ---
 
-## 📁 5. ESTRUCTURA DEL PROYECTO (ORGANIZACIÓN DE CARPETAS)
-```
-parisina_app/
-├── android/                  # Configuración nativa y perfiles de compilación
-├── ios/                      # Configuración nativa (mínima requerida)
-├── web/                      # Manifiesto y configuración web
-├── recursos/
-│   ├── imagenes/             # Logotipos, texturas, imágenes por defecto
-│   ├── iconos/               # Archivos vectoriales para navegación
-│   └── tipografias/          # Archivos de fuente locales (si se requieren)
-├── lib/
-│   ├── principal.dart        # Punto de entrada, inicialización de Firebase, proveedores y enrutador
-│   └── nucleo/
-│       ├── constantes/       # Rutas, cadenas fijas, formatos de moneda, límites
-│       ├── tema/             # Definición de paleta, tipografía, espaciados y componentes globales
-│       ├── utilidades/       # Validadores, formateadores de fecha/precio, helpers
-│       ├── enrutador/        # Configuración de navegación declarativa y protecciones de ruta
-│       └── servicios/        # Inicialización de Firebase, registros, analíticas
-├── modulos/
-│   ├── autenticacion/        # Modelos, proveedores, pantallas, componentes, servicios de login/registro
-│   ├── catalogo/             # Modelos, proveedores, pantallas de lista/detalle, filtros
-│   ├── carrito/              # Lógica local, persistencia ligera, interfaz de revisión
-│   ├── checkout/             # Cálculos de IVA, selección de método, diálogo de éxito
-│   ├── pedidos/              # Historial, estados de envío, simulación de seguimiento
-│   └── perfil/               # Datos de usuario, direcciones, cierre de sesión
-└── compartido/
-    ├── modelos/              # Entidades transversales (articulo_carrito, direccion, usuario)
-    ├── componentes/          # Botones, campos, tarjetas, pies de página, indicadores reutilizables
-    └── guardas/              # Interceptores de navegación, validación de permisos
-```
+## 🏗️ 4. Arquitectura & Gestión de Estado (Provider)
+### Patrón: Capas + Provider
+| Capa | Responsabilidad |
+|------|-----------------|
+| `presentation` | Pantallas, widgets UI, `ChangeNotifierProvider`, routing, temas |
+| `domain` | Entidades puras (sin Firebase), contratos de repositorios, casos de uso |
+| `data` | Servicios Firebase, DTOs (Data Transfer Objects), mapeo a entidades, implementación de repos |
+
+### Proveedores Principales
+- `AuthProvider`: Estado de sesión, rol (`admin`/`cliente`), perfil usuario, validación credenciales, persistencia local
+- `CatalogProvider`: Carga, paginación, filtrado y tiempo real de productos por categoría. Exposición de `Stream<List<ProductEntity>>`
+- `CartProvider`: Gestión local del carrito, cálculo subtotal/IVA, sincronización opcional con Firestore, limpieza post-compra
+- `UIProvider`: Estado global de carga, snackbars/dialogs, tema, navegación segura (guards), control de Drawer
+
+### Reglas de Uso de Provider
+- `context.watch<T>()` solo en widgets que deben reconstruirse
+- `context.read<T>()` para acciones puntuales (callbacks, botones)
+- Limpieza explícita de `StreamSubscription` al descartar pantallas
+- Inicialización única en `main.dart` con `MultiProvider`
 
 ---
 
-## 📦 6. DEPENDENCIAS REQUERIDAS (CONFIGURACIÓN DEL MANIFIESTO)
-Lista curada para incluir en el archivo de configuración del proyecto. Cada paquete tiene un propósito definido para este flujo simulado.
+## ️ 5. Adaptación de Tablas SQL a Firestore (NoSQL)
+Firestore es orientado a documentos. Se elimina la normalización estricta, se desnormaliza para lecturas rápidas, y se usan `DocumentReference` o IDs embebidos. Los tipos se mapean a los nativos de Dart/Firestore.
 
-| Paquete | Propósito en Parisina |
-|---|---|
-| `firebase_core` | Inicialización segura de la conexión con Firebase. |
-| `firebase_auth` | Gestión de registro, inicio de sesión, verificación de correo y recuperación de contraseña. |
-| `cloud_firestore` | Consultas, flujos en tiempo real, transacciones y persistencia local automática. |
-| `firebase_storage` | (Opcional) Si se requieren subidas de imágenes de perfil o comprobantes. |
-| `firebase_analytics` | Métricas de uso y comportamiento dentro de la simulación. |
-| `firebase_crashlytics` | Reporte silencioso de fallos para diagnóstico posterior. |
-| `provider` | Gestión de estado reactivo por módulo (autenticación, catálogo, carrito, pedidos). |
-| `go_router` | Navegación declarativa, protección de rutas privadas y enlaces profundos. |
-| `cached_network_image` | Carga eficiente de imágenes desde URLs públicas (GitHub) con caché local. |
-| `flutter_svg` | Renderizado de iconos y logotipos vectoriales. |
-| `shimmer` | Indicadores de carga visuales (esqueletos) para mejorar percepción de rendimiento. |
-| `intl` | Formateo automático de moneda (`$MXN`), fechas y números según localización `es_MX`. |
-| `google_fonts` | Integración directa de `Montserrat` e `Inter` sin archivos locales. |
-| `flutter_form_builder` | Construcción y validación de formularios de registro, dirección y checkout. |
-| `email_validator` | Verificación estricta de formato de correo electrónico. |
-| `formz` | Estados de validación de formularios (`puro`, `válido`, `enviando`, `inválido`). |
-| `uuid` | Generación de identificadores locales para artículos en carrito sin conexión. |
-| `equatable` | Comparación eficiente de modelos y estados para evitar reconstrucciones innecesarias. |
-| `shared_preferences` | Persistencia ligera de preferencias de usuario, última sucursal visitada y borrador de carrito. |
-| `collection` | Operaciones avanzadas sobre listas y mapas (filtrado, ordenamiento, agrupación). |
+### 📂 Colecciones & Estructura de Documentos
+| Colección | ID Documento | Campos Principales (Tipo Firestore) | Adaptación Respecto a SQL |
+|-----------|--------------|-------------------------------------|---------------------------|
+| `branches` | `auto-id` | `nombre`(String), `ciudad`(String), `estado`(String), `direccion`(String), `telefono`(String), `email`(String), `horario`(Map), `coordenadas`(Map), `activa`(bool), `gerente`(String), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Eliminación PK autoincremental. JSON → Map. Coordenadas → Map `{lat, lng}` |
+| `users` | `Firebase Auth UID` | `nombre`(String), `apellido`(String), `email`(String), `telefono`(String), `rol`(String: `cliente`/`vendedor`/`admin`/`superadmin`), `direcciones`(Array de Maps), `puntosFidelidad`(int), `sucursalRef`(DocumentReference), `activo`(bool), `verificado`(bool), `ultimoAcceso`(Timestamp), `createdAt`(Timestamp) | `id_usuario` → UID. `password_hash` → Gestionado por Firebase Auth. FK → Reference. ENUM → String. Añadido campo `apellido` según diseño de registro |
+| `telas` | `auto-id` | `nombre`(String), `tipo`(String), `composicion`(String), `anchoCm`(double), `precioMetro`(double), `colores`(Array<String>), `estampado`(bool), `descripcion`(String), `imagenUrls`(Array<String>), `stockMetros`(double), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | DECIMAL → double. JSON arrays → Array. FK → Reference |
+| `hilos` | `auto-id` | `nombre`(String), `marca`(String), `material`(String), `grosorNm`(double), `longitudM`(double), `colores`(Array), `usos`(Array), `precioUnidad`(double), `stock`(int), `imagenUrls`(Array), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Misma adaptación estructural |
+| `vestir` | `auto-id` | `nombre`(String), `tipo`(String), `subtipo`(String), `material`(String), `tallas`(Array), `colores`(Array), `medidas`(String), `precio`(double), `unidadVenta`(String), `stock`(int), `imagenUrls`(Array), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Desnormalización lista para UI |
+| `accesorios` | `auto-id` | `nombre`(String), `subcategoria`(String), `marca`(String), `descripcion`(String), `colores`(Array), `medidas`(String), `precio`(double), `unidadVenta`(String), `stock`(int), `imagenUrls`(Array), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Idem |
+| `maquinas` | `auto-id` | `nombre`(String), `marca`(String), `modelo`(String), `tipo`(String), `descripcion`(String), `precioVenta`(double), `precioRentaDia`(double), `enVenta`(bool), `enRenta`(bool), `stock`(int), `numSerie`(String), `imagenUrls`(Array), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Idem |
+| `hogar` | `auto-id` | `nombre`(String), `tipo`(String), `material`(String), `medidas`(String), `colores`(Array), `estampado`(bool), `precio`(double), `stock`(int), `imagenUrls`(Array), `activo`(bool), `sucursalRef`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Idem |
+| `carts` | `UID_usuario` | `items`(Array de Maps: `{productId, coleccion, nombre, precio, cantidad, imagenUrl}`), `subtotal`(double), `estado`(String: `activo`/`en_proceso`/`pagado`/`abandonado`), `sucursalRef`(Reference), `updatedAt`(Timestamp), `createdAt`(Timestamp) | PK → UID. FK → Reference. Items serializados para sync real-time |
+| `orders` | `auto-id` | `folio`(String), `userRef`(Reference), `sucursalRef`(Reference), `items`(Array de Maps), `subtotal`(double), `descuento`(double), `total`(double), `metodoPago`(String), `estado`(String), `entrega`(Map), `notas`(String), `createdAt`(Timestamp), `updatedAt`(Timestamp) | Snapshots de precios para auditoría. Folio único generado en cliente |
+| `returns` | `auto-id` | `orderRef`(Reference), `userRef`(Reference), `sucursalRef`(Reference), `items`(Array), `motivo`(String), `descripcion`(String), `estado`(String), `tipoResolucion`(String), `montoReembolso`(double), `evidenciaUrls`(Array), `atendidoPor`(Reference), `createdAt`(Timestamp), `updatedAt`(Timestamp) | FKs → References. Estado como string controlado por reglas |
+| `inventory` | `productoRef_sucursalRef` | `cantidad`(double), `unidad`(String), `umbralMinimo`(double), `ultimaEntrada`(Timestamp), `ultimaSalida`(Timestamp), `alertaActiva`(bool), `updatedAt`(Timestamp) | Se mantiene como colección separada para control multi-sucursal sin duplicar productos. ID compuesto para unicidad |
 
+### 🔒 Reglas de Seguridad (Firestore)
+- Lectura pública solo para documentos con `activo == true`
+- Escritura restringida a `admin`/`superadmin` o dueño del recurso (`request.auth.uid == resource.data.userRef.id`)
+- `carts`: solo lectura/escritura por `uid` propietario
+- `orders`: escritura solo por usuario autenticado, lectura por usuario + admin
+- Validación de tipos y rangos en reglas (`request.resource.data.matches(...)`)
+
+### 📊 Índices Compuestos (Requeridos en Firestore Console)
+- `telas`, `hilos`, `vestir`, `accesorios`, `maquinas`, `hogar`: `(activo ASC, precio ASC)` + `(activo ASC, createdAt DESC)`
+- `orders`: `(userRef ASC, estado ASC)` + `(createdAt DESC)`
+- `inventory`: `(sucursalRef ASC, alertaActiva ASC)`
+
+---
+
+## 📦 6. Dependencias (`pubspec.yaml`)
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-
-  # 🔥 Firebase (Núcleo y servicios)
-  firebase_core: ^3.8.0
-  firebase_auth: ^5.3.3
-  cloud_firestore: ^5.5.0
-  firebase_storage: ^12.3.6
-  firebase_analytics: ^11.3.5
-  firebase_crashlytics: ^4.2.0
-
-  # 🔄 Gestión de estado y navegación
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
   provider: ^6.1.2
-  go_router: ^14.6.0
-
-  # 🎨 Interfaz, imágenes y tipografía
+  go_router: ^14.2.1
   cached_network_image: ^3.4.1
+  intl: ^0.20.1
   flutter_svg: ^2.0.10+1
-  shimmer: ^3.0.0
-  google_fonts: ^6.2.1
-  intl: ^0.19.0
-
-  # 📝 Formularios y validación
-  flutter_form_builder: ^9.4.0
-  email_validator: ^3.0.0
-  formz: ^0.7.0
-
-  # 🛠️ Utilidades y persistencia ligera
+  fluttertoast: ^9.0.0
+  shared_preferences: ^2.3.3
   uuid: ^4.5.1
   equatable: ^2.0.5
-  shared_preferences: ^2.3.3
-  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
-  mocktail: ^1.0.4
+  flutter_lints: ^5.0.0
   build_runner: ^2.4.13
-  flutter_launcher_icons: ^0.14.1
-  flutter_native_splash: ^2.4.2
+  json_serializable: ^6.8.0
+  mocktail: ^1.0.4
 ```
----
-
-## 🔄 7. GESTIÓN DE ESTADO, NAVEGACIÓN Y FLUJO DE PAGO SIMULADO
-- **Arquitectura de proveedores:** Se utilizará `MultiProvider` en el punto de entrada. Cada módulo tendrá su propio proveedor:
-  - `ProveedorAutenticacion`: Controla sesión, estado de carga, y redirección según validez de credenciales.
-  - `ProveedorCatalogo`: Maneja carga paginada, filtros por categoría/precio, búsqueda con retraso (debounce) y estado de disponibilidad.
-  - `ProveedorCarrito`: Opera localmente con sincronización opcional. Calcula subtotales parciales, valida stock y aplica promociones activas.
-  - `ProveedorCheckout`: Centraliza cálculo de `IVA (16%)`, selección visual de método de pago, validación de dirección y generación del diálogo de confirmación.
-- **Navegación:** Declarativa mediante `go_router`. Rutas públicas: `inicio`, `catalogo`, `detalle`, `login`, `registro`. Rutas protegidas: `carrito`, `checkout`, `perfil`, `pedidos`. Si el usuario no está autenticado, se redirige automáticamente a la pantalla de acceso.
-- **Simulación de pago:**
-  1. El usuario revisa el resumen. Se calcula automáticamente: `Subtotal`, `IVA (16%)`, `Total`.
-  2. Se muestran botones visuales con logotipos de `Mercado Pago`, `PayPal` y `Transferencia`.
-  3. Al tocar `Confirmar Compra`, no se envía dinero real. Se muestra un diálogo modal centrado con mensaje `Compra Exitosa`, folio generado y opción `Ver pedido`.
-  4. Se limpia el carrito local, se registra la transacción en `ventas` (modo simulado) y se redirige al historial.
-
+*Notas:* Versiones alineadas al canal `stable` actual. `json_serializable` + `build_runner` para generación de código de DTOs. `uuid` para folios de pedido simulados. `equatable` para comparaciones limpias en entities.
 
 ---
 
-## 🧭 8. HOJA DE RUTA PASO A PASO
-1. **Configuración base:** Crear proyecto Flutter, registrar aplicación en Firebase Console, descargar configuraciones, inicializar `firebase_core` y verificar compilación en dispositivo Android físico.
-2. **Sistema de diseño:** Definir tema visual exacto, tipografías, componentes reutilizables y configurar el enrutador con protecciones básicas.
-3. **Módulo de autenticación:** Implementar pantallas de acceso, registro y recuperación. Conectar con Firebase Auth. Validar formularios y gestionar persistencia de sesión.
-4. **Estructura de datos:** Crear manualmente las colecciones en Firestore Console siguiendo la especificación del apartado 4. Configurar índices compuestos solicitados por la consola. Aplicar reglas de seguridad conceptuales.
-5. **Catálogo interactivo:** Conectar `ProveedorCatalogo` con Firestore. Implementar cuadrícula de productos, filtros, búsqueda y pantalla de detalle con selección de talla/color y carga de imágenes por URL.
-6. **Carrito y checkout:** Lógica de agregado, eliminación y cálculo de cantidades. Implementar resumen con desglose de IVA 16%. Integrar diálogo de confirmación simulada.
-7. **Historial y perfil:** Pantalla de pedidos con estados. Edición de datos personales, gestión de direcciones y cierre de sesión.
-8. **Pruebas y optimización:** Validar flujo completo en dispositivo físico. Verificar reconstrucciones de interfaz, caché de imágenes y comportamiento sin conexión. Ajustar rendimiento antes de compilación final.
-9. **Entrega educativa:** Generar paquete `APK` o `AAB`. Documentar arquitectura, reglas de seguridad y flujo de simulación para fines académicos o demostrativos.
+##  7. Estructura del Proyecto (Árbol Completo)
+```
+lib/
+├── core/
+│   ├── constants/
+│   │   ├── colors.dart
+│   │   ├── routes.dart
+│   │   ├── strings.dart
+│   │   └── firestore_collections.dart
+│   ├── theme/
+│   │   ├── app_theme.dart
+│   │   └── text_styles.dart
+│   ├── utils/
+│   │   ├── formatters.dart
+│   │   ├── validators.dart
+│   │   └── price_calculator.dart
+│   ── widgets/
+│       ├── custom_appbar.dart
+│       ├── footer_bar.dart
+│       ├── product_card.dart
+│       ├── loading_overlay.dart
+│       └── error_state.dart
+├── data/
+│   ├── models/
+│   │   ├── user_dto.dart
+│   │   ├── product_dto.dart
+│   │   ├── cart_dto.dart
+│   │   ├── order_dto.dart
+│   │   └── branch_dto.dart
+│   ├── repositories/
+│   │   ├── auth_repository_interface.dart
+│   │   ├── product_repository_interface.dart
+│   │   ├── cart_repository_interface.dart
+│   │   └── order_repository_interface.dart
+│   └── services/
+│       ├── firebase_auth_service.dart
+│       ├── firestore_service.dart
+│       └── image_cache_service.dart
+├── domain/
+│   ├── entities/
+│   │   ├── user_entity.dart
+│   │   ├── product_entity.dart
+│   │   ├── cart_item_entity.dart
+│   │   ├── order_entity.dart
+│   │   └── branch_entity.dart
+│   ├── repositories/
+│   │   ├── auth_repository.dart
+│   │   ├── catalog_repository.dart
+│   │   ├── cart_repository.dart
+│   │   └── order_repository.dart
+│   └── usecases/
+│       ├── calculate_checkout.dart
+│       └── generate_order_folio.dart
+├── presentation/
+│   ├── providers/
+│   │   ├── auth_provider.dart
+│   │   ├── catalog_provider.dart
+│   │   ├── cart_provider.dart
+│   │   └── ui_provider.dart
+│   ├── screens/
+│   │   ├── main_page/
+│   │   │   └── main_page_screen.dart
+│   │   ├── auth/
+│   │   │   ├── login_cliente_screen.dart
+│   │   │   ├── login_admin_screen.dart
+│   │   │   ├── register_screen.dart
+│   │   │   └── reset_password_screen.dart
+│   │   ├── home/
+│   │   │   ├── home_screen.dart
+│   │   │   └── category_grid.dart
+│   │   ├── catalog/
+│   │   │   ├── hilos_screen.dart
+│   │   │   ├── telas_screen.dart
+│   │   │   ├── vestir_screen.dart
+│   │   │   ├── accesorios_screen.dart
+│   │   │   ├── maquinas_screen.dart
+│   │   │   └── hogar_screen.dart
+│   │   ├── product/
+│   │   │   └── product_detail_modal.dart
+│   │   ├── cart/
+│   │   │   └── cart_screen.dart
+│   │   ├── checkout/
+│   │   │   ├── checkout_simulation_screen.dart
+│   │   │   └── success_dialog.dart
+│   │   ├── profile/
+│   │   │   └── profile_screen.dart
+│   │   └── info/
+│   │       ├── nosotros_screen.dart
+│   │       ├── sucursales_screen.dart
+│   │       ├── contactanos_screen.dart
+│   │       └── ayuda_screen.dart
+│   └── widgets/
+│       ├── navigation_drawer.dart
+│       ├── category_filter_bar.dart
+│       ├── payment_method_buttons.dart
+│       └── order_summary_widget.dart
+└── main.dart
+```
 
 ---
 
-## 🛡️ 9. VALIDACIÓN, SEGURIDAD Y COMPILACIÓN FÍSICA
-- **Reglas de Firestore:** Configurar en la consola para que `clientes` solo permita lectura/escritura al dueño. `productos`, `categorias`, `sucursales`, `promociones` permiten lectura pública. `ventas` e `inventarios` requieren transacciones y validación de permisos por rol.
-- **Validación en interfaz:** Todos los formularios deben rechazar entradas vacías, formatos de correo inválidos, teléfonos sin longitud mínima y contraseñas menores a ocho caracteres.
-- **Cálculo de impuestos:** Implementar redondeo a dos decimales. Fórmula: `total = subtotal + (subtotal * 0.16)`. Validar que no existan diferencias por redondeo en el resumen.
-- **Compilación física Android:** Usar `flutter build apk --target-platform android-arm,android-arm64` o `flutter run --release` conectado por USB. Verificar permisos de red, orientación y consumo de memoria.
-- **Manejo de imágenes:** Validar URLs antes de renderizar. Usar imagen por defecto en caso de fallo de red o enlace roto. No descargar imágenes mayores a un megabyte en catálogo.
+## 🔄 8. Flujo de Implementación Paso a Paso
+
+### ✅ Fase 1: Configuración Inicial & Firebase
+1. Instalar Flutter SDK, Dart, Android SDK y habilitar modo desarrollador en dispositivo físico.
+2. Crear proyecto Flutter: `flutter create parisina_app --org com.parisina`.
+3. Configurar Firebase Console: crear proyecto `parisina-telas`, registrar app Android con SHA-1, descargar `google-services.json`.
+4. Instalar Firebase CLI, iniciar emuladores (`firebase init emulators`) para Auth y Firestore.
+5. Configurar `pubspec.yaml` con dependencias listadas, ejecutar `flutter pub get`.
+6. Importar assets del diseño Figma: logo Parisina, iconos de redes sociales, imágenes de categorías y productos.
+
+### ✅ Fase 2: Diseño UI & Sistema de Temas (Basado en Figma)
+1. Crear archivo `colors.dart` con paleta exacta extraída de diseños (rojo `#B71C1C`, negro footer, grises inputs, etc.).
+2. Implementar `AppTheme` con `ThemeData`:
+   - `AppBarTheme`: fondo rojo, iconos blancos, logo centrado
+   - `Scaffold`: fondo blanco
+   - `Footer`: widget fijo negro con logo y año
+3. Construir `CustomAppBar` según diseño: logo Parisina + iconos carrito/perfil/menú.
+4. Implementar `FooterBar` fijo en todas las pantallas internas.
+5. Diseñar `NavigationDrawer` con estructura exacta del Figma (items + botón cerrar sesión).
+6. Validar contraste, espaciado, tamaños de fuente y alineación con diseños Figma en emulador y dispositivo físico.
+
+### ✅ Fase 3: MainPage & Autenticación
+1. Crear `MainPageScreen`:
+   - Logo grande + texto bienvenida + dos botones negros + link "Buscar ayuda"
+   - Navegación: botón cliente → LoginCliente, botón admin → LoginAdmin, link → AyudaScreen
+2. Implementar `FirebaseAuthService` con métodos: `register`, `login`, `logout`, `resetPassword`, `getCurrentUser`.
+3. Crear `AuthProvider` con `ChangeNotifier`, exponer `isAuthenticated`, `userRole`, `isLoading`, `errorMessage`.
+4. Desarrollar `LoginClienteScreen` y `LoginAdminScreen` con validaciones en tiempo real.
+5. Implementar `RegisterScreen` exacto al Figma: campos Nombre, Apellido, Correo, Contraseña, Confirmar Contraseña, botón REGISTRARSE.
+6. Implementar guardias de rutas: MainPage → Auth → Home según rol.
+
+### ✅ Fase 4: Estructura Firestore & Reglas de Seguridad
+1. Crear colecciones en Firestore Console según esquema adaptado (Sección 5).
+2. Subir datos de prueba manualmente o vía script de seeding (usar imágenes de GitHub como URLs).
+3. Configurar reglas de seguridad (`firestore.rules`) según roles y visibilidad.
+4. Crear índices compuestos requeridos.
+5. Probar reglas con emuladores antes de integrar en app.
+
+### ✅ Fase 5: HomeScreen & Catálogo
+1. Implementar `HomeScreen`:
+   - Banner superior con texto + botón "Ver Telas"
+   - Banner promocional con imagen + "30% Off en línea" + botón verde "COMPRAR"
+   - Sección "PRODUCTOS" con grid de 6 categorías circulares
+2. Implementar `CatalogProvider`: inicialización de streams por colección, paginación, filtros.
+3. Crear `FirestoreService` con métodos genéricos: `getStreamCollection`, `getDocument`, `updateDocument`, `listenChanges`.
+4. Construir pantallas por categoría (`hilos_screen.dart`, `telas_screen.dart`, etc.):
+   - `VestirScreen`: imagen hero + lista vertical de cards
+   - `AccesoriosScreen`/`MaquinasScreen`: cards horizontales con imagen, nombre, precio, botón "Comprar", botón "..."
+5. Implementar `ProductCard` según diseño exacto de Figma.
+6. Validar sincronización en tiempo real: cambios en Firestore reflejados instantáneamente en UI.
+
+### ✅ Fase 6: Product Detail & Carrito
+1. Implementar `ProductDetailModal`:
+   - Popup gris claro flotante con campos: Nombre, Precio, Proveedor, Unidad
+   - Botones "Comprar" y "X" para cerrar
+2. Implementar `CartProvider`: métodos `addItem`, `removeItem`, `updateQuantity`, `clearCart`, `calculateSubtotal`, `calculateTotal` (subtotal * 1.16).
+3. Diseñar `CartScreen` con lista editable, resumen financiero, botón "Ir a Pagar".
+4. Validar que badge del carrito en AppBar se actualice dinámicamente.
+
+### ✅ Fase 7: Checkout Simulado
+1. Crear `CheckoutSimulationScreen`: formulario de dirección simulada, selección visual de método de pago (MercadoPago/PayPal/Efectivo).
+2. Al confirmar: mostrar `SuccessDialog`, guardar orden en Firestore con estado `simulado/pagado`, vaciar carrito local.
+3. Validar que `Order` se cree con snapshot de precios, folio único y referencia a usuario.
+
+### ✅ Fase 8: Pantallas Informativas
+1. `NosotrosScreen`: imagen + texto histórico exacto al Figma.
+2. `SucursalesScreen`: listado de cards con nombre, dirección, horario (verde "Abierto"), teléfono.
+3. `ContactanosScreen`: iconos redes sociales + handles exactos al Figma.
+4. `AyudaScreen`: contenido de soporte y FAQ.
+5. Todas accesibles vía Drawer o navegación interna.
+
+### ✅ Fase 9: Perfil, Admin & Rutas Secundarias
+1. `ProfileScreen`: mostrar datos usuario, historial de órdenes simuladas, puntos de fidelidad, botón cerrar sesión.
+2. Panel Admin (acceso restringido): vista simplificada para modificar stock, precios, activar/desactivar productos. Cambios reflejados en tiempo real vía streams.
+3. Implementar `UIProvider` para manejo global de loaders, snackbars y navegación segura.
+
+### ✅ Fase 10: Pruebas & Optimización Android
+1. Pruebas unitarias: cálculos de precio, validaciones, mapeo DTO→Entity.
+2. Pruebas de integración: flujo MainPage → Auth → Home → Catálogo → Carrito → Checkout → Orden guardada.
+3. Pruebas en dispositivo físico: conexión USB, `flutter run -d <device_id>`, rotación, modo avión (persistencia offline), rendimiento de scroll.
+4. Optimizar: `const` widgets, `listen: false` en callbacks, lazy loading, compresión de assets, limpieza de streams.
+5. Ejecutar `flutter analyze` y `dart format .` para cumplir estándares.
+
+### ✅ Fase 11: Compilación & Despliegue Simulado
+1. Configurar `android/app/build.gradle` (minSdk 21, multidex si aplica, permisos internet).
+2. Generar build debug para pruebas finales: `flutter build apk --debug`.
+3. Instalar APK en dispositivo físico, validar flujo completo.
+4. Preparar estructura para release futuro: firmas, iconos adaptativos, políticas de privacidad.
+5. Documentar manual de uso, guía de administración Firestore y notas de simulación.
 
 ---
 
-## ✅ 10. LISTA DE VERIFICACIÓN FINAL (ANTES DE IMPLEMENTACIÓN)
-- [ ] Entorno Flutter/Dart verificado y dispositivo Android conectado con depuración USB.
-- [ ] Proyecto Firebase creado con Autenticación, Firestore y Analíticas activados.
-- [ ] Colecciones creadas en consola con nombres, tipos y campos exactos según especificación.
-- [ ] Índices compuestos generados y propagados.
-- [ ] Reglas de seguridad redactadas y validadas en simulador de consola.
-- [ ] Manifiesto de dependencias actualizado y resuelto sin conflictos.
-- [ ] Estructura de carpetas implementada y lista para módulos.
-- [ ] Paleta visual validada con contraste accesible y componentes reutilizables definidos.
-- [ ] Proveedores de estado diseñados con flujos claros de carga, éxito y error.
-- [ ] Enrutador configurado con protecciones y redirecciones automáticas.
-- [ ] Lógica de cálculo de IVA 16% y diálogo de compra exitosa documentada en flujo de checkout.
-- [ ] Estrategia de compilación física definida y lista para ejecución.
+## ✅ 9. Validación Final & Notas Técnicas
+- [ ] Entorno Flutter + Firebase CLI + Emuladores operativo
+- [ ] Paleta de colores implementada exactamente según diseños Figma
+- [ ] MainPage con logo, botones cliente/admin y link ayuda
+- [ ] AppBar rojo con logo + iconos carrito/perfil/menú en todas las pantallas internas
+- [ ] Footer negro con logo + "• 2026" en todas las pantallas internas
+- [ ] Navigation Drawer con estructura exacta del Figma
+- [ ] Autenticación con roles (admin/cliente) funcional y persistente
+- [ ] Firestore con colecciones adaptadas, reglas de seguridad activas, índices creados
+- [ ] Providers conectados sin fugas de memoria ni rebuilds innecesarios
+- [ ] HomeScreen con banners, grid de categorías circulares
+- [ ] Pantallas de categoría con cards exactas al diseño (Vestir hero + lista, Accesorios/Maquinas horizontales)
+- [ ] ProductDetail como modal popup según diseño
+- [ ] Carrito con cálculo automático IVA 16%, checkout simulado, diálogo de éxito
+- [ ] Pantallas Nosotros, Sucursales, Contactanos con contenido exacto al Figma
+- [ ] RegisterScreen con campos Nombre, Apellido, Correo, Contraseña, Confirmar
+- [ ] Pruebas en Android físico completadas, flujo end-to-end validado
+- [ ] Código formateado, linting sin errores, estructura modular mantenida
 
 ---
-📌 **Siguiente paso:** Este documento constituye el plano maestro completo. Una vez validado, se procederá a la generación modular del código fuente, iniciando por la configuración del tema, la inicialización de Firebase, la estructura de proveedores y la navegación protegida, respetando estrictamente este diseño y sin desviarse de la simulación educativa solicitada. ¿Deseas que se inicie la implementación por el bloque `nucleo/tema` y `principal.dart`, o prefieres ajustar algún detalle de las colecciones o del flujo de checkout antes de comenzar?
+
+## 📝 Nota sobre Adaptaciones de Base de Datos (SQL → Firestore)
+| Aspecto SQL | Adaptación Firestore | Justificación |
+|-------------|----------------------|---------------|
+| `INT AUTO_INCREMENT` PK | `auto-id` de Firestore o `Auth UID` | Elimina conflictos de concurrencia, escalabilidad horizontal |
+| `FOREIGN KEY` | `DocumentReference` o `String ID` | Firestore no soporta FK nativas; se usa referencia explícita |
+| `JSON` campos | `Map` o `List` nativos | Deserialización directa en Dart, sin parseo manual |
+| `DECIMAL(10,2)` | `double` | Compatible con precios y métricas; se formatea en UI con `intl` |
+| `ENUM` | `String` con validación en reglas/uso | Más flexible para evolución del esquema |
+| Tabla `inventario` separada | Mantener colección `inventory` | Evita duplicación masiva de productos por sucursal; permite alertas centralizadas |
+| `password_hash` | Gestionado por Firebase Auth | Seguridad nativa, sin almacenamiento local de credenciales |
+| `carrito.items` como JSON | `Array<Map>` en documento por usuario | Sincronización en tiempo real, edición granular, persistencia offline |
+| Campo `apellido` en usuarios | Añadido según diseño de Registro | El formulario Figma solicita Nombre y Apellido por separado |
+
+> **Recomendación de Mantenimiento:** Usar Firebase Emulator Suite para todas las pruebas de escritura/lectura antes de tocar producción. Mantener un script de seeding para recrear datos de prueba tras reseteos. Documentar cambios de esquema en `FIRESTORE_MIGRATION.md`. Asegurar que todas las imágenes de productos estén alojadas en URLs públicas estables (GitHub Raw/Releases) y usar `cached_network_image` para evitar recargas innecesarias.
+
+---
+📌 **Siguiente paso estratégico:** Validar este plan actualizado con los diseños Figma, aprobar estructura de carpetas y esquema Firestore, y proceder a la generación de la base del proyecto con `flutter create`, integración de Firebase y configuración de `main.dart`. ¿Deseas que profundice en el diseño de las reglas de seguridad de Firestore o en el flujo exacto de `Provider` para el carrito antes de iniciar la codificación?
+
+
+---
+
+# Prompt 
+
+Vamos a Mejorar y hacer Profesional nuestro Plan de Implementación. Actúa como un creador de software, diseñador de aplicaciones móviles multiplataforma.  Proporcionandome paso a paso cada requerimiento sin evitar detalles. Nota: NO me proporciones el código todavía.  
+
+Quiero crear una Aplicación multiplataforma Flutter Dart y Firebase, utilizando la herramienta Firebase Studio ( desde el Navegador de Google). Qué herramientas se requieren, ui, ux, dependencias, login autenticación usuario password, base de datos Firestore (Importante), privider, dependencias en pubspec.yaml. Lenguaje Dart, Flutter; para el proyecto en Firebase Studio, Mobile, flutter. 
+
+El proyecto será: una Tienda de Telas y Costuras con el nombre "Parisina". El objetivo de esta app es que las personas que accedan al Sitio (Usuarios), puedan comprar los diversos productos que ofrece nuestra tienda, dividido por categorías.
+
+La paleta de colores que utilizaremos será: Fondo de página (Blanco), Appbar (Rojo), Iconos AppBar (Blancos), Footer (Negro), Letras fuente Footer (Blanco); Contenido dentro del cuerpo (Subtonos Grises, Amarillos, Negros y Rojo, con detalles Blancos en caso de ser necesario). Como parte de ser diseñador, te encargo que escojas subtonos visualmente atractivos y elegantes, para una página profesional y seria. 
+
+Habrá: Inicio de sesión (Administrador y Usuario/Comprador) y Registro, Ayuda, Inicio, Nav dentro de Appbar (Con las siguientes páginas a seleccionar: Hilos, Telas, Vestir, Accesorios, Maquinas y Hogar, además, Nosotros, Sucursales y Nosotros) perfil de usuario, por ultimo, carrito. 
+
+El Entorno de trabajo que usaré será "Firebase Studio" vinculada con una Base de datos NO relacional en "Firebase Console", me proporcionarán la lista de dependencias  para el pubsyec.yaml como ayuda para la generación de este proyecto, te dejaré las tablas que planeo usar para este proyecto con sus campos-tipo y descripción. T
+
+Además, vas a generar un árbol de la estructura del proyecto con todos los archivos para saber cómo quedará estructurado. Importante proporcionar la información lo más completa y organizada posible. Sin evitar detalles IMPORTANTES. 
+
+Aquí te van las tablas (que adaparás a Firestore Console). Las opciones para el tipo de variable dentro de las tablas son: String, int64, double, boolean, map, array, reference, null y Timestamp.
+CREATE DATABASE IF NOT EXISTS bdparisina CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE bdparisina;
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- =========================================
+-- 1. SUCURSALES
+-- =========================================
+CREATE TABLE sucursal (
+    id_sucursal INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    estado VARCHAR(50),
+    direccion VARCHAR(255),
+    telefono VARCHAR(20),
+    email VARCHAR(120) UNIQUE,
+    horario JSON COMMENT 'Objeto con horarios por día: {lunes:{apertura, cierre}, ...}',
+    coordenadas JSON COMMENT 'GeoJSON: {type:"Point", coordinates:[lng, lat]}',
+    activa BOOLEAN DEFAULT TRUE,
+    gerente VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 2. USUARIOS
+-- =========================================
+CREATE TABLE usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    telefono VARCHAR(20),
+    password_hash VARCHAR(255) NOT NULL,
+    rol ENUM('cliente', 'vendedor', 'admin', 'superadmin') DEFAULT 'cliente',
+    direcciones JSON COMMENT 'Array de objetos: [{calle, colonia, ciudad, cp, estado, es_principal}]',
+    puntos_fidelidad INT DEFAULT 0,
+    sucursal_id INT,
+    activo BOOLEAN DEFAULT TRUE,
+    verificado BOOLEAN DEFAULT FALSE,
+    ultimo_acceso TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE SET NULL,
+    INDEX idx_usuario_email (email),
+    INDEX idx_usuario_rol (rol)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 3. TELAS
+-- =========================================
+CREATE TABLE tela (
+    id_tela INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    tipo VARCHAR(50),
+    composicion VARCHAR(255),
+    ancho_cm DECIMAL(5,2),
+    precio_metro DECIMAL(10,2) NOT NULL,
+    colores JSON COMMENT 'Array de strings',
+    estampado BOOLEAN DEFAULT FALSE,
+    descripcion TEXT,
+    imagen_urls JSON COMMENT 'Array de strings',
+    stock_metros DECIMAL(10,2) DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_tela_sucursal (sucursal_id),
+    INDEX idx_tela_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 4. HILOS
+-- =========================================
+CREATE TABLE hilo (
+    id_hilo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    marca VARCHAR(100),
+    material VARCHAR(50),
+    grosor_nm DECIMAL(5,2),
+    longitud_m DECIMAL(8,2),
+    colores JSON COMMENT 'Array de strings',
+    usos JSON COMMENT 'Array de strings',
+    precio_unidad DECIMAL(10,2) NOT NULL,
+    stock INT DEFAULT 0,
+    imagen_urls JSON COMMENT 'Array de strings',
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_hilo_sucursal (sucursal_id),
+    INDEX idx_hilo_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 5. VESTIR
+-- =========================================
+CREATE TABLE vestir (
+    id_vestir INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    subtipo VARCHAR(50),
+    material VARCHAR(50),
+    tallas JSON COMMENT 'Array de strings',
+    colores JSON COMMENT 'Array de strings',
+    medidas VARCHAR(50),
+    precio DECIMAL(10,2) NOT NULL,
+    unidad_venta VARCHAR(30),
+    stock INT DEFAULT 0,
+    imagen_urls JSON COMMENT 'Array de strings',
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_vestir_sucursal (sucursal_id),
+    INDEX idx_vestir_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 6. ACCESORIOS
+-- =========================================
+CREATE TABLE accesorio (
+    id_accesorio INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    subcategoria VARCHAR(50),
+    marca VARCHAR(100),
+    descripcion TEXT,
+    colores JSON COMMENT 'Array de strings',
+    medidas VARCHAR(50),
+    precio DECIMAL(10,2) NOT NULL,
+    unidad_venta VARCHAR(30),
+    stock INT DEFAULT 0,
+    imagen_urls JSON COMMENT 'Array de strings',
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_accesorio_sucursal (sucursal_id),
+    INDEX idx_accesorio_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 7. MÁQUINAS
+-- =========================================
+CREATE TABLE maquina (
+    id_maquina INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    marca VARCHAR(100),
+    modelo VARCHAR(100),
+    tipo VARCHAR(50),
+    descripcion TEXT,
+    precio_venta DECIMAL(10,2),
+    precio_renta_dia DECIMAL(10,2),
+    en_venta BOOLEAN DEFAULT FALSE,
+    en_renta BOOLEAN DEFAULT FALSE,
+    stock INT DEFAULT 0,
+    num_serie VARCHAR(50) UNIQUE,
+    imagen_urls JSON COMMENT 'Array de strings',
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_maquina_sucursal (sucursal_id),
+    INDEX idx_maquina_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 8. HOGAR
+-- =========================================
+CREATE TABLE hogar (
+    id_hogar INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    material VARCHAR(100),
+    medidas VARCHAR(50),
+    colores JSON COMMENT 'Array de strings',
+    estampado BOOLEAN DEFAULT FALSE,
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT DEFAULT 0,
+    imagen_urls JSON COMMENT 'Array de strings',
+    activo BOOLEAN DEFAULT TRUE,
+    sucursal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_hogar_sucursal (sucursal_id),
+    INDEX idx_hogar_activo (activo)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 9. CARRITO
+-- =========================================
+CREATE TABLE carrito (
+    id_carrito INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    items JSON COMMENT 'Array de objetos: [{producto_id, coleccion_origen, nombre_snap, precio_snap, cantidad, imagen_url}]',
+    subtotal DECIMAL(10,2) DEFAULT 0.00,
+    estado ENUM('activo', 'en_proceso_pago', 'pagado', 'abandonado') DEFAULT 'activo',
+    sucursal_id INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE SET NULL,
+    INDEX idx_carrito_usuario (usuario_id),
+    INDEX idx_carrito_estado (estado)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 10. PEDIDOS
+-- =========================================
+CREATE TABLE pedido (
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    folio VARCHAR(50) UNIQUE NOT NULL,
+    usuario_id INT NOT NULL,
+    sucursal_id INT NOT NULL,
+    items JSON COMMENT 'Snapshot de compra: [{producto_id, coleccion_origen, nombre_snap, precio_snap, cantidad}]',
+    subtotal DECIMAL(10,2) NOT NULL,
+    descuento DECIMAL(10,2) DEFAULT 0.00,
+    total DECIMAL(10,2) NOT NULL,
+    metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia', 'puntos'),
+    estado ENUM('pendiente', 'confirmado', 'en_preparacion', 'listo', 'entregado', 'cancelado') DEFAULT 'pendiente',
+    entrega JSON COMMENT 'Objeto: {tipo, direccion, fecha_estimada, guia}',
+    notas TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    INDEX idx_pedido_folio (folio),
+    INDEX idx_pedido_usuario (usuario_id),
+    INDEX idx_pedido_estado (estado)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 11. DEVOLUCIONES
+-- =========================================
+CREATE TABLE devolucion (
+    id_devolucion INT AUTO_INCREMENT PRIMARY KEY,
+    pedido_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    sucursal_id INT,
+    items JSON COMMENT 'Array: [{producto_id, coleccion_origen, cantidad, precio_pagado}]',
+    motivo VARCHAR(100),
+    descripcion TEXT,
+    estado ENUM('pendiente', 'en_revision', 'aprobada', 'rechazada', 'reembolsada') DEFAULT 'pendiente',
+    tipo_resolucion VARCHAR(50),
+    monto_reembolso DECIMAL(10,2),
+    evidencia_urls JSON COMMENT 'Array de strings',
+    atendido_por INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (pedido_id) REFERENCES pedido(id_pedido) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE SET NULL,
+    FOREIGN KEY (atendido_por) REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    INDEX idx_devolucion_pedido (pedido_id),
+    INDEX idx_devolucion_estado (estado)
+) ENGINE=InnoDB;
+
+-- =========================================
+-- 12. INVENTARIO
+-- =========================================
+CREATE TABLE inventario (
+    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT NOT NULL COMMENT 'ID del producto en su tabla correspondiente (tela, hilo, etc.)',
+    coleccion_origen ENUM('telas', 'hilos', 'vestir', 'accesorios', 'maquinas', 'hogar') NOT NULL COMMENT 'Tabla de referencia polimórfica',
+    sucursal_id INT NOT NULL,
+    cantidad DECIMAL(10,2) NOT NULL DEFAULT 0,
+    unidad VARCHAR(30),
+    umbral_minimo DECIMAL(10,2) DEFAULT 0,
+    ultima_entrada DATE,
+    ultima_salida DATE,
+    alerta_activa BOOLEAN DEFAULT FALSE,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE,
+    UNIQUE KEY uk_inventario_prod_suc (producto_id, coleccion_origen, sucursal_id),
+    INDEX idx_inventario_alerta (alerta_activa)
+) ENGINE=InnoDB;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+Envía en una sola respuesta completa sin quitar información, unificiando toda la información que te proporcioné y las mejoras de redacción y especificación que te pedí. Necesito el prompt mejorado.  Por último, ten en cuenta lo suguiente:
+
+Plataforma: Android (Prioridad), compilación en dispositivo físico.
+Modo: Simulación (E-commerce educativo). No se procesan pagos reales, pero se debe simular el flujo completo. Las tablas Si deberán funcionar y conectar con la base de datos, para que cuando el Admin modifique alguna tabla se actualice correctamente. 
+Idioma de interfaz página visible: Español.
+
+REQUERIMIENTOS TÉCNICOS:
+Stack: Flutter (Dart) + Firebase (Auth + Firestore).
+Imágenes: Las imágenes de los productos de las tablas se cargarán vía URLs públicas (GitHub). 
+Pagos: Simulación. Calcular Subtotal + IVA (16%). Opciones visuales de MercadoPago/PayPal, pero al confirmar, mostrar un Dialog de "Compra Exitosa".
+
+En caso de ser necesario modificar las tablas, hacerlo y notificar los cambios o actualización. 
