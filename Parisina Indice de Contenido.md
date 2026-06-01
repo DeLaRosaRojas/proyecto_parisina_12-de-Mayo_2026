@@ -1,7 +1,7 @@
 # Infografía Parisina 
 
 ## 1. Introducción
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/e7fd3608-c6bd-4982-9671-25f0eabb6a56" />
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/3888cc22-9764-4b63-b12e-df545c75bf1d" />
 
 ## 2. Objetivo Del Proyecto
 <img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/f6b6a046-e5d5-4901-9402-2de522c7d5be" />
